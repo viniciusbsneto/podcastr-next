@@ -9,13 +9,17 @@ interface Episode {
 };
 
 interface PlayerContextData {
-  episodeList: Episode[];
+  episodesList: Episode[];
   currentEpisodeIndex: number;
   isPlaying: boolean;
   play: (episode: Episode) => void;
   playList: (list: Episode[], index: number) => void;
   setPlayingState: (state: boolean) => void;
   togglePlay: () => void;
+  playNext: () => void;
+  playPrevious: () => void;
+  hasNext: boolean;
+  hasPrevious: boolean;
 };
 
 interface PlayerContextProviderProps {
@@ -25,18 +29,18 @@ interface PlayerContextProviderProps {
 export const PlayerContext = createContext({} as PlayerContextData);
 
 export function PlayerContextProvider({ children }: PlayerContextProviderProps) {
-  const [episodeList, setEpisodeList] = useState([]);
+  const [episodesList, setEpisodesList] = useState([]);
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
   function play(episode: Episode) {
-    setEpisodeList([episode]);
+    setEpisodesList([episode]);
     setCurrentEpisodeIndex(0);
     setIsPlaying(true);
   }
 
   function playList(list: Episode[], index: number) {
-    setEpisodeList(list);
+    setEpisodesList(list);
     setCurrentEpisodeIndex(index);
     setIsPlaying(true);
   }
@@ -49,16 +53,37 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
     setIsPlaying(state);
   }
 
+  const hasPrevious = currentEpisodeIndex > 0;
+  const hasNext = (currentEpisodeIndex + 1) < episodesList.length;
+
+  function playNext() {
+    const nextEpisodeIndex = currentEpisodeIndex + 1;
+
+    if (hasNext) {
+      setCurrentEpisodeIndex(currentEpisodeIndex + 1);
+    }
+  }
+
+  function playPrevious() {
+    if (hasPrevious) {
+      setCurrentEpisodeIndex(currentEpisodeIndex - 1);
+    }
+  }
+
   return (
     <PlayerContext.Provider
       value={{
-        episodeList,
+        episodesList,
         currentEpisodeIndex,
         play,
         playList,
+        playNext,
+        playPrevious,
         isPlaying,
         togglePlay,
-        setPlayingState
+        setPlayingState,
+        hasNext,
+        hasPrevious
       }}
     >
       {children}
