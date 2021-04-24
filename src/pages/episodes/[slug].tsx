@@ -7,7 +7,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 
 import { api } from '../../services/api';
 import { convertDurationToTimeString } from '../../utils/convertDurationToTimeString';
-import { PlayerContext } from '../../contexts/PlayerContext';
+import { usePlayer } from '../../contexts/PlayerContext';
 
 import styles from './episode.module.scss';
 
@@ -29,7 +29,7 @@ interface EpisodeProps {
 };
 
 export default function Episode({ episode }: EpisodeProps) {
-  const { play } = useContext(PlayerContext);
+  const { play } = usePlayer();
 
   return (
     <div className={styles.episode}>
